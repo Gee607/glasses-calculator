@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>年青人眼鏡新生店製</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+    }
+    .tab-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .tab-buttons button {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+    button.calculate {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      font-size: 18px;
+    }
+    #result, #lensResult {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: center;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h2>年青人眼鏡新生店製</h2>
+  <div class="tab-buttons">
+    <button onclick="switchTab('cash')">實收現金</button>
+    <button onclick="switchTab('lens')">眼鏡→隱形眼鏡</button>
+  </div>
+
+  <!-- Tab 1: 實收現金 -->
+  <div id="cash" class="tab-content active">
+    <label for="a">a（總收入= 現金 + 刷卡 + 電子支付 + 折抵）</label>
+    <input type="number" id="a" step="0.01">
+    <label for="b">b（雜支）</label>
+    <input type="number" id="b" step="0.01">
+    <label for="c">c（刷卡金額）</label>
+    <input type="number" id="c" step="0.01">
+    <label for="F">F（散光拋）</label>
+    <input type="number" id="F" step="0.01">
+    <label for="J">J（藥水）</label>
+    <input type="number" id="J" step="0.01">
+    <label for="L">L（拋棄式）</label>
+    <input type="number" id="L" step="0.01">
+    <button class="calculate" onclick="calculateCash()">計算實收現金</button>
+    <div id="result">實收現金：--</div>
+  </div>
+
+  <!-- Tab 2: 處方轉換 -->
+  <div id="lens" class="tab-content">
+    <label for="sph">球面度數（a / SPH）</label>
+    <input type="number" id="sph" step="0.01">
+    <label for="cyl">柱狀度數（b / CYL）</label>
+    <input type="number" id="cyl" step="0.01">
+    <label for="axis">軸位（AXIS）</label>
+    <input type="number" id="axis" step="1">
+    <button class="calculate" onclick="convertLens()">計算隱形眼鏡處方</button>
+    <div id="lensResult">新處方：--</div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(div => {
+        div.classList.remove("active");
+      });
+      document.getElementById(tabId).classList.add("active");
+    }
+
+    function calculateCash() {
+      const a = parseFloat(document.getElementById("a").value) || 0;
+      const b = parseFloat(document.getElementById("b").value) || 0;
+      const c = parseFloat(document.getElementById("c").value) || 0;
+      const F = parseFloat(document.getElementById("F").value) || 0;
+      const J = parseFloat(document.getElementById("J").value) || 0;
+      const L = parseFloat(document.getElementById("L").value) || 0;
+      const result = a - b - (c - 0.9825 * c) - F - J - L;
+      document.getElementById("result").innerText = "實收現金：" + result.toFixed(2) + " 元";
+    }
+
+    function convertLens() {
+      const a = parseFloat(document.getElementById("sph").value) || 0;
+      const b = parseFloat(document.getElementById("cyl").value) || 0;
+      const axis = document.getElementById("axis").value || "--";
+
+      const c = 1 - (a * 0.012);
+      const d = a / c;
+
+      const e = a + b;
+      const f = 1 - (e * 0.012);
+      const g = e / f;
+
+      const h = g - d;
+
+      const newSPH = d.toFixed(2);
+      const newCYL = h.toFixed(2);
+
+      document.getElementById("lensResult").innerText =
+        `隱形眼鏡處方：SPH ${newSPH} / CYL ${newCYL} / AXIS ${axis}`;
+    }
+  </script>
+</body>
+</html>
